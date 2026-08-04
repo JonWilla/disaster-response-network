@@ -1,3 +1,25 @@
 spring:
   application:
-    name: backend
+    name: disaster-response-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/disaster_response
+    username: disaster_user
+    password: disaster_password
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
