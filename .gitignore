@@ -1,0 +1,24 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Frontend dependencies and builds
+node_modules/
+dist/
+build/
+
+# Backend builds
+**/target/
