@@ -110,16 +110,36 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth ->
                         auth
+
+                                /*
+                                 * Swagger / OpenAPI
+                                 */
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v3/api-docs/**"
+                                )
+                                .permitAll()
+
+                                /*
+                                 * Authentication
+                                 */
                                 .requestMatchers(
                                         "/api/auth/**"
                                 )
                                 .permitAll()
 
+                                /*
+                                 * Health
+                                 */
                                 .requestMatchers(
                                         "/actuator/health"
                                 )
                                 .permitAll()
 
+                                /*
+                                 * Resources
+                                 */
                                 .requestMatchers(
                                         "/api/resources/**"
                                 )
@@ -129,6 +149,9 @@ public class SecurityConfig {
                                         "ADMIN"
                                 )
 
+                                /*
+                                 * Assignments
+                                 */
                                 .requestMatchers(
                                         "/api/assignments/**"
                                 )
@@ -137,6 +160,9 @@ public class SecurityConfig {
                                         "ADMIN"
                                 )
 
+                                /*
+                                 * Responders
+                                 */
                                 .requestMatchers(
                                         "/api/responders/**"
                                 )
@@ -145,6 +171,9 @@ public class SecurityConfig {
                                         "ADMIN"
                                 )
 
+                                /*
+                                 * Incidents
+                                 */
                                 .requestMatchers(
                                         "/api/incidents/**"
                                 )
