@@ -45,6 +45,36 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(body);
     }
+    @ExceptionHandler(DomainNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleDomainNotFound(
+            DomainNotFoundException exception
+    ) {
+        Map<String, Object> body = new LinkedHashMap<>();
+
+        body.put(
+                "timestamp",
+                OffsetDateTime.now(ZoneOffset.UTC)
+        );
+
+        body.put(
+                "status",
+                HttpStatus.NOT_FOUND.value()
+        );
+
+        body.put(
+                "error",
+                "Not Found"
+        );
+
+        body.put(
+                "message",
+                exception.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(body);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(
