@@ -16,10 +16,12 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IncidentNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleIncidentNotFound(
+    public ResponseEntity<Map<String, Object>>
+    handleIncidentNotFound(
             IncidentNotFoundException exception
     ) {
-        Map<String, Object> body = new LinkedHashMap<>();
+        Map<String, Object> body =
+                new LinkedHashMap<>();
 
         body.put(
                 "timestamp",
@@ -45,11 +47,14 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(body);
     }
+
     @ExceptionHandler(DomainNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleDomainNotFound(
+    public ResponseEntity<Map<String, Object>>
+    handleDomainNotFound(
             DomainNotFoundException exception
     ) {
-        Map<String, Object> body = new LinkedHashMap<>();
+        Map<String, Object> body =
+                new LinkedHashMap<>();
 
         body.put(
                 "timestamp",
@@ -73,21 +78,57 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(body);
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleDuplicateEmail(
+            DuplicateEmailException exception
+    ) {
+        Map<String, Object> body =
+                new LinkedHashMap<>();
+
+        body.put(
+                "timestamp",
+                OffsetDateTime.now(ZoneOffset.UTC)
+        );
+
+        body.put(
+                "status",
+                HttpStatus.CONFLICT.value()
+        );
+
+        body.put(
+                "error",
+                "Conflict"
+        );
+
+        body.put(
+                "message",
+                exception.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(
+    public ResponseEntity<Map<String, Object>>
+    handleValidationErrors(
             MethodArgumentNotValidException exception
     ) {
-        Map<String, String> validationErrors =
+        Map<String, String> fieldErrors =
                 new LinkedHashMap<>();
 
         for (
-                FieldError fieldError :
-                exception.getBindingResult().getFieldErrors()
+                FieldError fieldError
+                : exception
+                .getBindingResult()
+                .getFieldErrors()
         ) {
-            validationErrors.put(
+            fieldErrors.put(
                     fieldError.getField(),
                     fieldError.getDefaultMessage()
             );
@@ -113,11 +154,11 @@ public class GlobalExceptionHandler {
 
         body.put(
                 "fieldErrors",
-                validationErrors
+                fieldErrors
         );
 
         return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.BAD_REQUEST)
                 .body(body);
     }
 }
