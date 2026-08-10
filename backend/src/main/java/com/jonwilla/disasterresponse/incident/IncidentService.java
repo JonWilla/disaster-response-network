@@ -5,6 +5,8 @@ import com.jonwilla.disasterresponse.incident.dto.CreateIncidentRequest;
 import com.jonwilla.disasterresponse.incident.dto.IncidentResponse;
 import com.jonwilla.disasterresponse.incident.dto.IncidentSummaryResponse;
 import com.jonwilla.disasterresponse.incident.dto.UpdateIncidentRequest;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,10 @@ public class IncidentService {
                 incidentRepository;
     }
 
+    @CacheEvict(
+            value = "incidentSummary",
+            allEntries = true
+    )
     public IncidentResponse create(
             CreateIncidentRequest request
     ) {
@@ -86,6 +92,7 @@ public class IncidentService {
         return toResponse(incident);
     }
 
+    @Cacheable("incidentSummary")
     @Transactional(readOnly = true)
     public IncidentSummaryResponse getSummary() {
 
@@ -121,6 +128,10 @@ public class IncidentService {
         );
     }
 
+    @CacheEvict(
+            value = "incidentSummary",
+            allEntries = true
+    )
     public IncidentResponse update(
             UUID id,
             UpdateIncidentRequest request
@@ -155,6 +166,10 @@ public class IncidentService {
         return toResponse(savedIncident);
     }
 
+    @CacheEvict(
+            value = "incidentSummary",
+            allEntries = true
+    )
     public void delete(
             UUID id
     ) {
