@@ -1,5 +1,6 @@
 package com.jonwilla.disasterresponse.incident;
 
+import com.jonwilla.disasterresponse.event.IncidentEventProducer;
 import com.jonwilla.disasterresponse.exception.IncidentNotFoundException;
 import com.jonwilla.disasterresponse.incident.dto.CreateIncidentRequest;
 import com.jonwilla.disasterresponse.incident.dto.IncidentResponse;
@@ -26,11 +27,17 @@ class IncidentServiceTest {
     @Mock
     private IncidentRepository incidentRepository;
 
+    @Mock
+    private IncidentEventProducer incidentEventProducer;
+
     private IncidentService incidentService;
 
     @BeforeEach
     void setUp() {
-        incidentService = new IncidentService(incidentRepository);
+        incidentService = new IncidentService(
+                incidentRepository,
+                incidentEventProducer
+        );
     }
 
     @Test
@@ -62,10 +69,16 @@ class IncidentServiceTest {
                 IncidentStatus.REPORTED,
                 response.status()
         );
-        assertEquals("Laurel, MD", response.location());
+        assertEquals(
+                "Laurel, MD",
+                response.location()
+        );
 
         verify(incidentRepository)
                 .save(any(Incident.class));
+
+        verify(incidentEventProducer)
+                .publishIncidentCreated(any());
     }
 
     @Test
@@ -86,11 +99,16 @@ class IncidentServiceTest {
         IncidentResponse response =
                 incidentService.findById(id);
 
-        assertEquals("Wildfire", response.title());
+        assertEquals(
+                "Wildfire",
+                response.title()
+        );
+
         assertEquals(
                 IncidentSeverity.CRITICAL,
                 response.severity()
         );
+
         assertEquals(
                 IncidentStatus.REPORTED,
                 response.status()
@@ -143,7 +161,10 @@ class IncidentServiceTest {
         );
 
         IncidentResponse response =
-                incidentService.update(id, request);
+                incidentService.update(
+                        id,
+                        request
+                );
 
         assertEquals(
                 "Flood Response",
@@ -205,7 +226,9 @@ class IncidentServiceTest {
                         .findByStatusOrderByReportedAtDesc(
                                 IncidentStatus.IN_PROGRESS
                         )
-        ).thenReturn(List.of(incident));
+        ).thenReturn(
+                List.of(incident)
+        );
 
         List<IncidentResponse> responses =
                 incidentService.findAll(
@@ -213,7 +236,10 @@ class IncidentServiceTest {
                         null
                 );
 
-        assertEquals(1, responses.size());
+        assertEquals(
+                1,
+                responses.size()
+        );
 
         assertEquals(
                 IncidentStatus.IN_PROGRESS,

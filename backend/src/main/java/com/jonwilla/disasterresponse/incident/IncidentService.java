@@ -1,5 +1,7 @@
 package com.jonwilla.disasterresponse.incident;
 
+import com.jonwilla.disasterresponse.event.IncidentCreatedEvent;
+import com.jonwilla.disasterresponse.event.IncidentEventProducer;
 import com.jonwilla.disasterresponse.exception.IncidentNotFoundException;
 import com.jonwilla.disasterresponse.incident.dto.CreateIncidentRequest;
 import com.jonwilla.disasterresponse.incident.dto.IncidentResponse;
@@ -18,12 +20,17 @@ import java.util.UUID;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final IncidentEventProducer incidentEventProducer;
 
     public IncidentService(
-            IncidentRepository incidentRepository
+            IncidentRepository incidentRepository,
+            IncidentEventProducer incidentEventProducer
     ) {
         this.incidentRepository =
                 incidentRepository;
+
+        this.incidentEventProducer =
+                incidentEventProducer;
     }
 
     @CacheEvict(
@@ -43,6 +50,16 @@ public class IncidentService {
 
         Incident savedIncident =
                 incidentRepository.save(incident);
+
+        incidentEventProducer.publishIncidentCreated(
+                new IncidentCreatedEvent(
+                        savedIncident.getId(),
+                        savedIncident.getTitle(),
+                        savedIncident.getSeverity(),
+                        savedIncident.getLocation(),
+                        savedIncident.getReportedAt()
+                )
+        );
 
         return toResponse(savedIncident);
     }
