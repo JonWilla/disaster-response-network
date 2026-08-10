@@ -2,18 +2,11 @@ package com.jonwilla.disasterresponse.incident;
 
 import com.jonwilla.disasterresponse.incident.dto.CreateIncidentRequest;
 import com.jonwilla.disasterresponse.incident.dto.IncidentResponse;
+import com.jonwilla.disasterresponse.incident.dto.IncidentSummaryResponse;
 import com.jonwilla.disasterresponse.incident.dto.UpdateIncidentRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -28,7 +21,8 @@ public class IncidentController {
     public IncidentController(
             IncidentService incidentService
     ) {
-        this.incidentService = incidentService;
+        this.incidentService =
+                incidentService;
     }
 
     @PostMapping
@@ -43,8 +37,8 @@ public class IncidentController {
         return ResponseEntity
                 .created(
                         URI.create(
-                                "/api/incidents/" +
-                                        response.id()
+                                "/api/incidents/"
+                                        + response.id()
                         )
                 )
                 .body(response);
@@ -62,6 +56,11 @@ public class IncidentController {
                 status,
                 severity
         );
+    }
+
+    @GetMapping("/summary")
+    public IncidentSummaryResponse getSummary() {
+        return incidentService.getSummary();
     }
 
     @GetMapping("/{id}")

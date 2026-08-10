@@ -3,6 +3,7 @@ package com.jonwilla.disasterresponse.incident;
 import com.jonwilla.disasterresponse.exception.IncidentNotFoundException;
 import com.jonwilla.disasterresponse.incident.dto.CreateIncidentRequest;
 import com.jonwilla.disasterresponse.incident.dto.IncidentResponse;
+import com.jonwilla.disasterresponse.incident.dto.IncidentSummaryResponse;
 import com.jonwilla.disasterresponse.incident.dto.UpdateIncidentRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +17,11 @@ public class IncidentService {
 
     private final IncidentRepository incidentRepository;
 
-    public IncidentService(IncidentRepository incidentRepository) {
-        this.incidentRepository = incidentRepository;
+    public IncidentService(
+            IncidentRepository incidentRepository
+    ) {
+        this.incidentRepository =
+                incidentRepository;
     }
 
     public IncidentResponse create(
@@ -48,7 +52,9 @@ public class IncidentService {
 
             incidents =
                     incidentRepository
-                            .findByStatusOrderByReportedAtDesc(status);
+                            .findByStatusOrderByReportedAtDesc(
+                                    status
+                            );
 
         } else if (severity != null) {
 
@@ -71,17 +77,56 @@ public class IncidentService {
     }
 
     @Transactional(readOnly = true)
-    public IncidentResponse findById(UUID id) {
-        Incident incident = findIncident(id);
+    public IncidentResponse findById(
+            UUID id
+    ) {
+        Incident incident =
+                findIncident(id);
 
         return toResponse(incident);
+    }
+
+    @Transactional(readOnly = true)
+    public IncidentSummaryResponse getSummary() {
+
+        long total =
+                incidentRepository.count();
+
+        long reported =
+                incidentRepository.countByStatus(
+                        IncidentStatus.REPORTED
+                );
+
+        long inProgress =
+                incidentRepository.countByStatus(
+                        IncidentStatus.IN_PROGRESS
+                );
+
+        long resolved =
+                incidentRepository.countByStatus(
+                        IncidentStatus.RESOLVED
+                );
+
+        long critical =
+                incidentRepository.countBySeverity(
+                        IncidentSeverity.CRITICAL
+                );
+
+        return new IncidentSummaryResponse(
+                total,
+                reported,
+                inProgress,
+                resolved,
+                critical
+        );
     }
 
     public IncidentResponse update(
             UUID id,
             UpdateIncidentRequest request
     ) {
-        Incident incident = findIncident(id);
+        Incident incident =
+                findIncident(id);
 
         incident.setTitle(
                 request.title()
@@ -104,23 +149,33 @@ public class IncidentService {
         );
 
         Incident savedIncident =
-                incidentRepository.saveAndFlush(incident);
+                incidentRepository
+                        .saveAndFlush(incident);
 
         return toResponse(savedIncident);
     }
 
-    public void delete(UUID id) {
-        Incident incident = findIncident(id);
+    public void delete(
+            UUID id
+    ) {
+        Incident incident =
+                findIncident(id);
 
-        incidentRepository.delete(incident);
+        incidentRepository.delete(
+                incident
+        );
     }
 
-    private Incident findIncident(UUID id) {
+    private Incident findIncident(
+            UUID id
+    ) {
         return incidentRepository
                 .findById(id)
                 .orElseThrow(
                         () ->
-                                new IncidentNotFoundException(id)
+                                new IncidentNotFoundException(
+                                        id
+                                )
                 );
     }
 
