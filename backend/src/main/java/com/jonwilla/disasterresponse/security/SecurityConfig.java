@@ -128,6 +128,13 @@ public class SecurityConfig {
                                         "/api/auth/**"
                                 )
                                 .permitAll()
+                                /*
+                                 * WebSocket
+                                 */
+                                .requestMatchers(
+                                        "/ws/**"
+                                )
+                                .permitAll()
 
                                 /*
                                  * Health
