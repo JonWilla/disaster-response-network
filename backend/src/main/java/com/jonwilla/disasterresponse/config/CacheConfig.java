@@ -7,9 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
@@ -22,30 +19,17 @@ public class CacheConfig {
             RedisConnectionFactory connectionFactory
     ) {
 
-        GenericJacksonJsonRedisSerializer jsonSerializer =
-                GenericJacksonJsonRedisSerializer
-                        .builder()
-                        .build();
+        ClassLoader applicationClassLoader =
+                Thread.currentThread()
+                        .getContextClassLoader();
 
         RedisCacheConfiguration configuration =
                 RedisCacheConfiguration
-                        .defaultCacheConfig()
+                        .defaultCacheConfig(
+                                applicationClassLoader
+                        )
                         .entryTtl(
                                 Duration.ofMinutes(5)
-                        )
-                        .serializeKeysWith(
-                                RedisSerializationContext
-                                        .SerializationPair
-                                        .fromSerializer(
-                                                new StringRedisSerializer()
-                                        )
-                        )
-                        .serializeValuesWith(
-                                RedisSerializationContext
-                                        .SerializationPair
-                                        .fromSerializer(
-                                                jsonSerializer
-                                        )
                         )
                         .disableCachingNullValues();
 
