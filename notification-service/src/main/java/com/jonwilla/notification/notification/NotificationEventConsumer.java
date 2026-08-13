@@ -1,7 +1,6 @@
-package com.jonwilla.disasterresponse.notification;
+package com.jonwilla.notification.notification;
 
-import com.jonwilla.disasterresponse.event.IncidentCreatedEvent;
-import com.jonwilla.disasterresponse.incident.IncidentSeverity;
+import com.jonwilla.notification.event.IncidentCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -26,14 +25,13 @@ public class NotificationEventConsumer {
 
     @KafkaListener(
             topics = "incident-events",
-            groupId = "legacy-notification-service-group",
-            autoStartup = "${notifications.legacy-consumer-enabled:false}"
+            groupId = "notification-service-group"
     )
     public void consume(
             IncidentCreatedEvent event
     ) {
 
-        if (event.severity() != IncidentSeverity.CRITICAL) {
+        if (!"CRITICAL".equalsIgnoreCase(event.severity())) {
             return;
         }
 
@@ -45,7 +43,7 @@ public class NotificationEventConsumer {
                 );
 
         log.info(
-                "Critical incident notification created: incidentId={}, title={}",
+                "Critical incident notification created by notification-service: incidentId={}, title={}",
                 event.incidentId(),
                 event.title()
         );

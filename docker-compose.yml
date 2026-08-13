@@ -72,6 +72,30 @@ services:
       kafka:
         condition: service_started
     restart: unless-stopped
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+
+    container_name: disaster-response-notification-service
+
+    environment:
+      NOTIFICATION_DB_URL: jdbc:postgresql://postgres:5432/notification_service
+      DB_USERNAME: disaster_user
+      DB_PASSWORD: disaster_password
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+      SERVER_PORT: 8081
+
+    ports:
+      - "8081:8081"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+    restart: unless-stopped
 
   frontend:
     build:
