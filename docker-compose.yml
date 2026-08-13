@@ -97,6 +97,31 @@ services:
 
     restart: unless-stopped
 
+  analytics-service:
+    build:
+      context: ./analytics-service
+      dockerfile: Dockerfile
+
+    container_name: disaster-response-analytics-service
+
+    environment:
+      ANALYTICS_DB_URL: jdbc:postgresql://postgres:5432/analytics_service
+      DB_USERNAME: disaster_user
+      DB_PASSWORD: disaster_password
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+      SERVER_PORT: 8082
+
+    ports:
+      - "8082:8082"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
