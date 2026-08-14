@@ -122,6 +122,30 @@ services:
 
     restart: unless-stopped
 
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+
+    container_name: disaster-response-api-gateway
+
+    environment:
+      BACKEND_URL: http://backend:8080
+      BACKEND_WS_URL: ws://backend:8080
+      NOTIFICATION_SERVICE_URL: http://notification-service:8081
+      ANALYTICS_SERVICE_URL: http://analytics-service:8082
+      SERVER_PORT: 8090
+
+    ports:
+      - "8090:8090"
+
+    depends_on:
+      - backend
+      - notification-service
+      - analytics-service
+
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend

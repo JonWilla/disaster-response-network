@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+
+            - id: backend-auth
+              uri: ${BACKEND_URL:http://localhost:8080}
+              predicates:
+                - Path=/api/auth/**
+
+            - id: backend-incidents
+              uri: ${BACKEND_URL:http://localhost:8080}
+              predicates:
+                - Path=/api/incidents/**
+
+            - id: backend-responders
+              uri: ${BACKEND_URL:http://localhost:8080}
+              predicates:
+                - Path=/api/responders/**
+
+            - id: backend-resources
+              uri: ${BACKEND_URL:http://localhost:8080}
+              predicates:
+                - Path=/api/resources/**
+
+            - id: backend-assignments
+              uri: ${BACKEND_URL:http://localhost:8080}
+              predicates:
+                - Path=/api/assignments/**
+
+            - id: notifications
+              uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/notifications/**
+
+            - id: analytics
+              uri: ${ANALYTICS_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/analytics/**
+
+            - id: websocket
+              uri: ${BACKEND_WS_URL:ws://localhost:8080}
+              predicates:
+                - Path=/ws/**
+
+server:
+  port: ${SERVER_PORT:8090}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gatewayggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
