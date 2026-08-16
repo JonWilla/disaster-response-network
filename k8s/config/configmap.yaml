@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: disaster-response-config
+  namespace: disaster-response
+
+data:
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+
+  BACKEND_URL: http://backend:8080
+  BACKEND_WS_URL: ws://backend:8080
+  NOTIFICATION_SERVICE_URL: http://notification-service:8081
+  ANALYTICS_SERVICE_URL: http://analytics-service:8082

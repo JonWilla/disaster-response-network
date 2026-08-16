@@ -52,7 +52,11 @@ server:
   port: ${SERVER_PORT:8090}
 
 management:
+  endpoint:
+    gateway:
+      access: read-only
+
   endpoints:
     web:
       exposure:
-        include: health,info,gatewayggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+        include: health,info,gateway

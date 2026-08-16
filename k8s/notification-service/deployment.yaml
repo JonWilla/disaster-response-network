@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: notification-service
+  namespace: disaster-response
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: notification-service
+
+  template:
+    metadata:
+      labels:
+        app: notification-service
+
+    spec:
+      containers:
+        - name: notification-service
+          image: disaster-response-network-notification-service
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8081
+
+          env:
+            - name: NOTIFICATION_DB_URL
+              value: jdbc:postgresql://postgres:5432/notification_service
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: disaster-response-secrets
+                  key: DB_USERNAME
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: disaster-response-secrets
+                  key: DB_PASSWORD
+
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+
+            - name: SERVER_PORT
+              value: "8081"

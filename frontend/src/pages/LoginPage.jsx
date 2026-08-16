@@ -9,7 +9,7 @@ function LoginPage() {
         useState("jonny.test@example.com");
 
     const [password, setPassword] =
-        useState("StrongPass123!");
+        useState("postgres");
 
     const [error, setError] =
         useState("");

@@ -103,7 +103,7 @@ function DashboardPage() {
             new Client({
 
                 brokerURL:
-                    "ws://localhost:8080/ws",
+                    `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`,
 
                 reconnectDelay: 5000,
 

@@ -1,5 +1,6 @@
 package com.jonwilla.disasterresponse.security;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -93,7 +94,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 List.of(
                         "http://localhost:5173",
-                        "http://localhost:3000"
+                        "http://localhost:3000",
+                        "http://localhost:3001"
                 )
         );
 
@@ -162,6 +164,23 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth ->
                         auth
+
+                                /*
+                                 * Internal error / forward dispatches
+                                 */
+                                .dispatcherTypeMatchers(
+                                        DispatcherType.ERROR,
+                                        DispatcherType.FORWARD
+                                )
+                                .permitAll()
+
+                                /*
+                                 * Spring Boot error endpoint
+                                 */
+                                .requestMatchers(
+                                        "/error"
+                                )
+                                .permitAll()
 
                                 /*
                                  * Swagger / OpenAPI

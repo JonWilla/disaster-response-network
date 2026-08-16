@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: api-gateway
+  namespace: disaster-response
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: api-gateway
+
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+
+    spec:
+      containers:
+        - name: api-gateway
+          image: disaster-response-network-api-gateway
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8090
+
+          env:
+            - name: SERVER_PORT
+              value: "8090"
+
+            - name: BACKEND_URL
+              value: "http://backend:8080"
+
+            - name: NOTIFICATION_SERVICE_URL
+              value: "http://notification-service:8081"
+
+            - name: ANALYTICS_SERVICE_URL
+              value: "http://analytics-service:8082"
+
+            - name: BACKEND_WS_URL
+              value: "ws://backend:8080"
