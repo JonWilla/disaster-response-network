@@ -209,10 +209,12 @@ public class SecurityConfig {
                                 .permitAll()
 
                                 /*
-                                 * Health
+                                 * Actuator / Monitoring
                                  */
                                 .requestMatchers(
-                                        "/actuator/health"
+                                        "/actuator/health",
+                                        "/actuator/info",
+                                        "/actuator/prometheus"
                                 )
                                 .permitAll()
 
